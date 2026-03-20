@@ -1,0 +1,14 @@
+name = "chamadosoperarum"
+compatibility_date = "2024-03-14"
+pages_build_output_dir = "dist"
+
+# Aqui você fará o vínculo do banco de dados D1 com o Cloudflare Pages
+# Execute o comando `npx wrangler d1 create chamados-db` no seu terminal 
+# para criar o banco de dados no Cloudflare. Em seguida, cole o `database_id` gerado abaixo:
+[[d1_databases]]
+binding = "DB"
+database_name = "chamados-db"
+database_id = "92e4b569-de61-461d-88da-8b8e6e70079d"
+
+# Você pode usar preview_database_id para rodar os testes localmente
+# npx wrangler d1 execute chamados-db --local --file=./schema.sql

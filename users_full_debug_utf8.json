@@ -1,0 +1,72 @@
+﻿[
+  {
+    "results": [
+      {
+        "id": 1,
+        "clerk_id": null,
+        "name": "Cond├┤mino",
+        "role": "client",
+        "email": "cliente@operarum.com",
+        "company": "FORD COMPANY"
+      },
+      {
+        "id": 2,
+        "clerk_id": null,
+        "name": "Operarum",
+        "role": "provider",
+        "email": "tecnico@operarum.com",
+        "company": ""
+      },
+      {
+        "id": 3,
+        "clerk_id": null,
+        "name": "Administrador",
+        "role": "admin",
+        "email": "ti@shoppingid.com.br",
+        "company": ""
+      },
+      {
+        "id": 4,
+        "clerk_id": null,
+        "name": "Arlei",
+        "role": "admin",
+        "email": "arlei.bsb@gmail.com",
+        "company": "ANTONIO VEN├âNCIO DA SILVA EMPREENDIMENTOS IMOBILI├üRIOS LTDA"
+      },
+      {
+        "id": 5,
+        "clerk_id": "user_3Aw6zmyPMVWhAecLhBzin5HrxVb",
+        "name": "Arlei Ferreira",
+        "role": "admin",
+        "email": "ti@venancio.eco.br",
+        "company": "ANTONIO VEN├âNCIO DA SILVA EMPREENDIMENTOS IMOBILI├üRIOS LTDA"
+      },
+      {
+        "id": 6,
+        "clerk_id": "user_3AwHjIPuCshqBLmMcDD79Xw6cxT",
+        "name": "teste cliente",
+        "role": "client",
+        "email": "ti2@venancioid.com.br",
+        "company": ""
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "ENAM",
+      "served_by_colo": "MIA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.1623
+      },
+      "duration": 0.1623,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 61440,
+      "rows_read": 6,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]

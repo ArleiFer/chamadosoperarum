@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-operarum: #06330c; /* Exact match from logooperarum_qlxw5o.jpg */
+  --color-operarum-light: #004d2c;
+  --color-operarum-dark: #001a0a;
+  
+  --color-primary: var(--color-operarum);
+  --color-secondary: #ffffff;
+  
+  /* Neutral scale based on operarum.com */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, .brand-text {
+    @apply font-bold tracking-[0.1em] uppercase;
+  }
+}
+
+@layer components {
+  .btn-operarum {
+    @apply bg-operarum text-white px-6 py-3 rounded-sm font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 active:scale-95;
+  }
+  
+  .card-operarum {
+    @apply bg-white border border-slate-200 shadow-sm rounded-sm overflow-hidden;
+  }
+}
