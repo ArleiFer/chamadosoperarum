@@ -16,7 +16,7 @@ export interface Ticket {
   location: string;
   priority: 'Baixa' | 'Média' | 'Alta' | 'Crítica';
   type: string;
-  status: 'Em Aberto' | 'Em Atendimento' | 'Impedimento' | 'Aguardando Aprovação' | 'Finalizado' | 'Cancelado';
+  status: 'Em Aberto' | 'Em Atendimento' | 'Impedimento' | 'Aguardando Peças' | 'Aguardando Aprovação' | 'Finalizado' | 'Cancelado';
   company?: string;
   requestor_name?: string;
   phone?: string;
@@ -35,6 +35,7 @@ export interface Ticket {
   final_report?: string;
   reopen_reason?: string;
   external_id?: string;
+  materials?: string;
 }
 
 export interface Comment {

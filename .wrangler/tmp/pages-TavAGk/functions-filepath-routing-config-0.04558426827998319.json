@@ -1,0 +1,21 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/:route*",
+      "mountPath": "/api",
+      "method": "",
+      "module": [
+        "api/[[route]].ts:onRequest"
+      ]
+    },
+    {
+      "routePath": "/api/:route*-AlienWare-Arlei",
+      "mountPath": "/api",
+      "method": "",
+      "module": [
+        "api/[[route]]-AlienWare-Arlei.ts:onRequest"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}

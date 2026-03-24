@@ -38,6 +38,7 @@ db.exec(`
     provider_id INTEGER,
     nps_score INTEGER,
     external_id TEXT,
+    materials TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES users (id),
@@ -358,9 +359,10 @@ async function startServer() {
     `).all(req.params.id);
 
     res.json({ 
-      ...(ticket as object), 
+      ...(ticket as any),
       comments, 
-      photos: photos.map((p: any) => p.photo_data) 
+      photos: photos.map((p: any) => p.photo_data),
+      materials: (ticket as any).materials
     });
   });
 
@@ -496,6 +498,12 @@ async function startServer() {
       }
     }
 
+    res.json({ success: true });
+  });
+
+  app.put("/api/tickets/:id/materials", (req, res) => {
+    const { materials } = req.body;
+    db.prepare("UPDATE tickets SET materials = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(materials, req.params.id);
     res.json({ success: true });
   });
 
@@ -699,7 +707,7 @@ async function startServer() {
     const reopens = db.prepare("SELECT COUNT(*) as count FROM comments WHERE message LIKE '%reaberto%'").get() as any;
 
     // 11. Chamados Abertos
-    const openTickets = db.prepare("SELECT COUNT(*) as count FROM tickets WHERE status = 'Em Aberto'").get() as any;
+    const openTickets = db.prepare("SELECT COUNT(*) as count FROM tickets WHERE status IN ('Em Aberto', 'Aguardando Peças')").get() as any;
 
     // 12. Progresso de SLA por Atendente
     const slaByProvider = db.prepare(`
