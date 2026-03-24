@@ -466,20 +466,6 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
           </div>
         )}
 
-        {/* Description */}
-        <div className="p-6 border-b border-slate-200">
-          <h3 className="text-sm font-medium text-slate-900 mb-2">Descrição do Problema</h3>
-          <div 
-            className="text-slate-700 rich-text-content"
-            dangerouslySetInnerHTML={{ __html: ticket.description }}
-          />
-          <style>{`
-            .rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
-            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
-            .rich-text-content a { color: #2563eb; text-decoration: underline; }
-            .rich-text-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1rem 0; }
-          `}</style>
-        </div>
 
         {/* Materiais e Ferramentas */}
         <div className="p-6 border-b border-slate-200 bg-slate-50/50">
@@ -514,8 +500,23 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
             </div>
           )}
         </div>
-          
-          {ticket.photos && ticket.photos.length > 0 && (
+
+        {/* Description */}
+        <div className="p-6 border-b border-slate-200">
+          <h3 className="text-sm font-medium text-slate-900 mb-2">Descrição do Problema</h3>
+          <div 
+            className="text-slate-700 rich-text-content"
+            dangerouslySetInnerHTML={{ __html: ticket.description }}
+          />
+          <style>{`
+            .rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+            .rich-text-content a { color: #2563eb; text-decoration: underline; }
+            .rich-text-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1rem 0; }
+          `}</style>
+        </div>
+
+        {ticket.photos && ticket.photos.length > 0 && (
             <div className="mt-6">
               <h3 className="text-sm font-medium text-slate-900 mb-3">Fotos Anexadas</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
