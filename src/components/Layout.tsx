@@ -307,15 +307,15 @@ export default function Layout({ children, currentView, onNavigate, onSelectTick
             </div>
             <div className="mt-8 pt-6 border-t border-slate-800/50 flex flex-col items-center gap-1 opacity-30 hover:opacity-100 transition-opacity pb-4">
               <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">
-                &copy; {new Date().getFullYear()} Operarum
+                &copy; {new Date().getFullYear()} Operarum - v1.2.0
               </span>
               <a 
                 href="https://aftecbsb.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-[9px] font-black text-blue-500/80 hover:text-blue-400 tracking-widest uppercase transition-colors"
+                className="text-[9px] font-black text-blue-500/80 hover:text-blue-400 tracking-widest uppercase transition-colors flex items-center gap-1"
               >
-                Dev: Aftec Brasília
+                Dev: Aftec Brasília <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1"></div>
               </a>
             </div>
           </div>
