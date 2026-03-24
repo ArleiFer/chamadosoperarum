@@ -315,13 +315,15 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
             </button>
           )}
           
-          <button 
-            onClick={() => handlePrint('os')}
-            className="flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-sm text-[10px] font-bold transition-all shadow-sm active:scale-95 uppercase tracking-[0.2em]"
-            title="Imprimir Resumo Técnico (OS)"
-          >
-            <Printer className="h-4 w-4 mr-2" /> Imprimir OS
-          </button>
+          {(isAdmin || isProvider) && (
+            <button 
+              onClick={() => handlePrint('os')}
+              className="flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-sm text-[10px] font-bold transition-all shadow-sm active:scale-95 uppercase tracking-[0.2em]"
+              title="Imprimir Resumo Técnico (OS)"
+            >
+              <Printer className="h-4 w-4 mr-2" /> Imprimir OS
+            </button>
+          )}
 
           <button 
             onClick={() => handlePrint('history')}
@@ -467,24 +469,21 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
         )}
 
 
-        {/* Materiais e Ferramentas */}
-        <div className="p-6 border-b border-slate-200 bg-slate-50/50">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center">
-              <Wrench className="h-4 w-4 mr-2 text-operarum" />
-              Materiais e Ferramentas
-            </h3>
-            {(isAdmin || isProvider) && (
+        {(isAdmin || isProvider) && (
+          <div className="p-6 border-b border-slate-200 bg-slate-50/50">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center">
+                <Wrench className="h-4 w-4 mr-2 text-operarum" />
+                Materiais e Ferramentas
+              </h3>
               <button
                 onClick={handleSaveMaterials}
                 className="text-[10px] font-black text-white bg-operarum px-3 py-1.5 rounded-sm hover:bg-operarum-light transition-all shadow-sm active:scale-95 uppercase tracking-widest"
               >
                 Salvar Lista
               </button>
-            )}
-          </div>
-          
-          {(isAdmin || isProvider) ? (
+            </div>
+            
             <textarea
               value={materials}
               onChange={(e) => setMaterials(e.target.value)}
@@ -492,14 +491,8 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
               rows={4}
               className="w-full rounded-sm border-slate-300 shadow-sm focus:border-operarum focus:ring-operarum text-sm p-4 border bg-white"
             />
-          ) : (
-            <div className="bg-white p-4 rounded-sm border border-slate-200 min-h-[60px]">
-              <p className="text-slate-600 text-sm whitespace-pre-wrap">
-                {materials || "Nenhum material ou ferramenta listado até o momento."}
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Description */}
         <div className="p-6 border-b border-slate-200">
@@ -849,8 +842,8 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
               </div>
             </div>
 
-            {/* Materiais e Ferramentas (Print) */}
-            {ticket.materials && (
+            {/* Materiais e Ferramentas (Print - Technical Only) */}
+            {(isAdmin || isProvider) && ticket.materials && (
               <div className="mb-10 border-t-2 border-slate-900 pt-6">
                 <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Materiais e Ferramentas Utilizados</h3>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
