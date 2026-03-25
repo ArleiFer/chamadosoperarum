@@ -49,6 +49,12 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
       // No need to fetch sectors/ST/companies if only profile
       return;
     }
+    
+    // If technician (provider), default to sectors since users is hidden
+    if (currentUser?.role === 'provider' && activeTab === 'users' && !isProfileOnly) {
+      setActiveTab('sectors');
+    }
+
     fetchData();
   }, [isProfileOnly, currentUser]);
 
@@ -159,11 +165,11 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
       <div className="border-b border-slate-100 bg-slate-50/50 p-3 md:p-6">
         <div className="flex space-x-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
           {[
-            { id: 'users', label: 'Usuários', icon: Users },
-            { id: 'sectors', label: 'Setores', icon: Briefcase },
-            { id: 'service-types', label: 'Serviços', icon: Tags },
-            { id: 'companies', label: 'Empresas', icon: Building2 }
-          ].map((tab) => (
+            { id: 'users', label: 'Usuários', icon: Users, roles: ['admin'] },
+            { id: 'sectors', label: 'Setores', icon: Briefcase, roles: ['admin', 'provider'] },
+            { id: 'service-types', label: 'Serviços', icon: Tags, roles: ['admin', 'provider'] },
+            { id: 'companies', label: 'Empresas', icon: Building2, roles: ['admin', 'provider'] }
+          ].filter(tab => tab.roles.includes(currentUser?.role || '')).map((tab) => (
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id as any); resetForm(); }}
