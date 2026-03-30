@@ -312,7 +312,8 @@ app.get('/tickets/:id', async (c) => {
     comments: comments || [],
     photos: photos ? photos.filter(p => p.photo_type === 'opening').map(p => p.photo_data) : [],
     final_photos: photos ? photos.filter(p => p.photo_type === 'final').map(p => p.photo_data) : [],
-    materials: (ticket as any).materials
+    materials: (ticket as any).materials,
+    observations: (ticket as any).observations
   });
 });
 
@@ -344,25 +345,25 @@ app.post('/tickets', async (c) => {
     stmt = c.env.DB.prepare(`
       INSERT INTO tickets (
         id, title, description, location, priority, type, sector, 
-        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, observations
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
     `);
     bindParams = [
       id, title, description, location, priority, type, sector, 
-      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, body.observations || null
     ];
   } else {
     stmt = c.env.DB.prepare(`
       INSERT INTO tickets (
         title, description, location, priority, type, sector, 
-        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, observations
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
     `);
     bindParams = [
       title, description, location, priority, type, sector, 
-      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, body.observations || null
     ];
   }
   
@@ -622,6 +623,18 @@ app.post('/tickets/:id/comments', async (c) => {
 
   return c.json({ id: info?.id });
 });
+
+app.put('/tickets/:id/observations', async (c) => {
+  const id = c.req.param('id');
+  const { observations } = await c.req.json();
+  
+  await c.env.DB.prepare("UPDATE tickets SET observations = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind(observations, id)
+    .run();
+    
+  return c.json({ success: true });
+});
+
 
 app.delete('/tickets/:id', async (c) => {
   try {

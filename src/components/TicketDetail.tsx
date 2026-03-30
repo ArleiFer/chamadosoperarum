@@ -28,6 +28,7 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
   const [finalReport, setFinalReport] = useState('');
   const [finalPhotos, setFinalPhotos] = useState<string[]>([]);
   const [materials, setMaterials] = useState('');
+  const [observations, setObservations] = useState('');
   const [printMode, setPrintMode] = useState<'os' | 'history'>('os');
   const finalFileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -42,6 +43,7 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
         if (data.error) throw new Error(data.error);
         setTicket(data);
         setMaterials(data.materials || '');
+        setObservations(data.observations || '');
       })
       .catch(err => {
         console.error("Fetch ticket error:", err);
@@ -51,6 +53,21 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleSaveObservations = async () => {
+    if (!ticket) return;
+    try {
+      const res = await fetch(`/api/tickets/${ticketId}/observations`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ observations }),
+      });
+      if (!res.ok) throw new Error('Falha ao salvar observações');
+      alert("Observações salvas com sucesso!");
+    } catch (error: any) {
+      alert(error.message || "Erro ao salvar observações.");
+    }
   };
 
   useEffect(() => {
@@ -491,8 +508,54 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
               rows={4}
               className="w-full rounded-sm border-slate-300 shadow-sm focus:border-operarum focus:ring-operarum text-sm p-4 border bg-white"
             />
+<<<<<<< HEAD
           </div>
         )}
+=======
+          ) : (
+            <div className="bg-white p-4 rounded-sm border border-slate-200 min-h-[60px]">
+              <p className="text-slate-600 text-sm whitespace-pre-wrap">
+                {materials || "Nenhum material ou ferramenta listado até o momento."}
+              </p>
+            </div>
+          )}
+        </div>
+        
+        {/* Observações Adicionais */}
+        <div className="p-6 border-b border-slate-200 bg-blue-50/10">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center">
+              <Star className="h-4 w-4 mr-2 text-blue-600" />
+              Observações Adicionais
+            </h3>
+            {(isAdmin || isProvider) && (
+              <button
+                onClick={handleSaveObservations}
+                className="text-[10px] font-black text-white bg-blue-600 px-3 py-1.5 rounded-sm hover:bg-blue-700 transition-all shadow-sm active:scale-95 uppercase tracking-widest"
+              >
+                Salvar OBS
+              </button>
+            )}
+          </div>
+          
+          {(isAdmin || isProvider) ? (
+            <textarea
+              value={observations}
+              onChange={(e) => setObservations(e.target.value)}
+              placeholder="Adicione aqui observações internas ou detalhes extras..."
+              rows={3}
+              className="w-full rounded-sm border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-4 border bg-white"
+            />
+          ) : (
+            <div className="bg-white p-4 rounded-sm border border-slate-200 min-h-[50px]">
+              <p className="text-slate-600 text-sm whitespace-pre-wrap">
+                {observations || "Nenhuma observação adicional."}
+              </p>
+            </div>
+          )}
+        </div>
+
+>>>>>>> main
 
         {/* Description */}
         <div className="p-6 border-b border-slate-200">
@@ -852,9 +915,21 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
               </div>
             )}
 
+            {ticket.observations && (
+              <div className="mb-10 border-t-2 border-slate-900 pt-6">
+                <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Observações Adicionais</h3>
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <p className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">{ticket.observations}</p>
+                </div>
+              </div>
+            )}
+
             <div className="border-2 border-slate-100 rounded-2xl p-8 mb-10">
               <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Escopo da Solicitação</h3>
-              <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-medium">{ticket.description}</p>
+              <div 
+                className="text-sm text-slate-800 leading-relaxed font-medium rich-text-content"
+                dangerouslySetInnerHTML={{ __html: ticket.description }}
+              />
             </div>
 
             {ticket.final_report && (

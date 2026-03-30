@@ -39,6 +39,7 @@ db.exec(`
     nps_score INTEGER,
     external_id TEXT,
     materials TEXT,
+    observations TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES users (id),
@@ -362,13 +363,14 @@ async function startServer() {
       ...(ticket as any),
       comments, 
       photos: photos.map((p: any) => p.photo_data),
-      materials: (ticket as any).materials
+      materials: (ticket as any).materials,
+      observations: (ticket as any).observations
     });
   });
 
   app.post("/api/tickets", async (req, res) => {
     try {
-      const { id, title, description, location, priority, type, sector, company, client_id, photos, external_id } = req.body;
+      const { id, title, description, location, priority, type, sector, company, client_id, photos, external_id, observations } = req.body;
     
     // Fetch sector email if available
     const sectorInfo = sector ? db.prepare("SELECT email FROM sectors WHERE name = ?").get(sector) as any : null;
@@ -380,13 +382,13 @@ async function startServer() {
     let stmt: any;
     if (id) {
       stmt = db.prepare(`
-        INSERT INTO tickets (id, title, description, location, priority, type, sector, company, client_id, external_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO tickets (id, title, description, location, priority, type, sector, company, client_id, external_id, observations)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
     } else {
       stmt = db.prepare(`
-        INSERT INTO tickets (title, description, location, priority, type, sector, company, client_id, external_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO tickets (title, description, location, priority, type, sector, company, client_id, external_id, observations)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
     }
    
@@ -394,9 +396,9 @@ async function startServer() {
     const transaction = db.transaction(() => {
       let info;
       if (id) {
-        info = stmt.run(id, title, description, location, priority, type, sector, company, client_id, external_id);
+        info = stmt.run(id, title, description, location, priority, type, sector, company, client_id, external_id, observations || null);
       } else {
-        info = stmt.run(title, description, location, priority, type, sector, company, client_id, external_id || null);
+        info = stmt.run(title, description, location, priority, type, sector, company, client_id, external_id, observations || null);
       }
       const ticketId = info.lastInsertRowid;
     
@@ -583,6 +585,11 @@ async function startServer() {
     res.json({ success: true });
   });
 
+  app.put("/api/tickets/:id/observations", (req, res) => {
+    const { observations } = req.body;
+    db.prepare("UPDATE tickets SET observations = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(observations, req.params.id);
+    res.json({ success: true });
+  });
   app.delete("/api/tickets/:id", (req, res) => {
     try {
       const { id } = req.params;

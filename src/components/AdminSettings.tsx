@@ -43,6 +43,7 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     if (isProfileOnly && currentUser) {
       setUsers([currentUser]);
       setActiveTab('users');
@@ -55,7 +56,12 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
       setActiveTab('sectors');
     }
 
+=======
+>>>>>>> main
     fetchData();
+    if (isProfileOnly) {
+      setActiveTab('users');
+    }
   }, [isProfileOnly, currentUser]);
 
   const handleAddItem = async (e: React.FormEvent) => {
@@ -161,11 +167,15 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
   </div>
 
   <div className="bg-white shadow-sm rounded-sm border border-slate-200 overflow-hidden">
-    {!isProfileOnly && (
+    {( !isProfileOnly || (currentUser?.role === 'admin' || currentUser?.role === 'provider') ) && (
       <div className="border-b border-slate-100 bg-slate-50/50 p-3 md:p-6">
         <div className="flex space-x-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
           {[
+<<<<<<< HEAD
             { id: 'users', label: 'Usuários', icon: Users, roles: ['admin'] },
+=======
+            { id: 'users', label: isProfileOnly ? 'Meu Perfil' : 'Usuários', icon: isProfileOnly ? UserIcon : Users, roles: ['admin', 'provider'] },
+>>>>>>> main
             { id: 'sectors', label: 'Setores', icon: Briefcase, roles: ['admin', 'provider'] },
             { id: 'service-types', label: 'Serviços', icon: Tags, roles: ['admin', 'provider'] },
             { id: 'companies', label: 'Empresas', icon: Building2, roles: ['admin', 'provider'] }
@@ -188,6 +198,25 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
     )}
 
         <div className="p-8">
+          {(!editingItemId || activeTab !== 'users') && !isProfileOnly && (
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest">
+                {activeTab === 'users' ? 'Usuários Cadastrados' :
+                 activeTab === 'sectors' ? 'Setores Disponíveis' :
+                 activeTab === 'service-types' ? 'Tipos de Serviço' :
+                 'Empresas Parceiras'}
+              </h2>
+              {(currentUser?.role === 'admin' || (currentUser?.role === 'provider' && activeTab !== 'users')) && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center px-4 py-2 bg-operarum text-white rounded-sm font-bold text-xs hover:bg-operarum-light transition-all shadow-md active:scale-95 uppercase tracking-widest"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Adicionar {activeTab === 'users' ? 'Usuário' : 'Item'}
+                </button>
+              )}
+            </div>
+          )}
+
           {(!editingItemId || activeTab !== 'users') && !isProfileOnly && (
             <form onSubmit={handleAddItem} className="mb-12 bg-slate-50 p-8 rounded-sm border border-slate-200 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none">
@@ -280,7 +309,7 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
             </form>
           )}
 
-          {(isProfileOnly && users.length > 0) ? (
+          {(isProfileOnly && activeTab === 'users' && users.length > 0) ? (
             <div className="space-y-6">
               <div className="bg-slate-50 rounded-sm p-8 flex flex-col items-center border border-slate-200">
                 <div className="h-20 w-20 bg-white rounded-sm overflow-hidden flex items-center justify-center shadow-md border border-slate-200 mb-4 group relative">
@@ -535,4 +564,13 @@ export default function AdminSettings({ isProfileOnly = false }: { isProfileOnly
       )}
     </div>
   );
+}
+
+function getRoleLabel(role: string) {
+  switch (role) {
+    case 'admin': return 'Administrador';
+    case 'provider': return 'Prestador / Técnico';
+    case 'client': return 'Condômino / Cliente';
+    default: return role;
+  }
 }
