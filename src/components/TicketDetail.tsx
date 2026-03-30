@@ -29,6 +29,7 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
   const [finalPhotos, setFinalPhotos] = useState<string[]>([]);
   const [materials, setMaterials] = useState('');
   const [observations, setObservations] = useState('');
+  const [scope, setScope] = useState('');
   const [printMode, setPrintMode] = useState<'os' | 'history'>('os');
   const finalFileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -44,6 +45,7 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
         setTicket(data);
         setMaterials(data.materials || '');
         setObservations(data.observations || '');
+        setScope(data.scope || '');
       })
       .catch(err => {
         console.error("Fetch ticket error:", err);
@@ -67,6 +69,21 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
       alert("Observações salvas com sucesso!");
     } catch (error: any) {
       alert(error.message || "Erro ao salvar observações.");
+    }
+  };
+
+  const handleSaveScope = async () => {
+    if (!ticket) return;
+    try {
+      const res = await fetch(`/api/tickets/${ticketId}/scope`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope }),
+      });
+      if (!res.ok) throw new Error('Falha ao salvar escopo');
+      alert("Escopo da solicitação salvo com sucesso!");
+    } catch (error: any) {
+      alert(error.message || "Erro ao salvar escopo.");
     }
   };
 
@@ -484,6 +501,55 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
         )}
 
 
+        {/* Escopo da Solicitação */}
+        <div className="p-6 border-b border-slate-200 bg-amber-50/20">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center">
+              <CheckCircle className="h-4 w-4 mr-2 text-amber-600" />
+              Escopo da Solicitação
+            </h3>
+            {(isAdmin || isProvider) && (
+              <button
+                onClick={handleSaveScope}
+                className="text-[10px] font-black text-white bg-amber-600 px-3 py-1.5 rounded-sm hover:bg-amber-700 transition-all shadow-sm active:scale-95 uppercase tracking-widest"
+              >
+                Salvar Escopo
+              </button>
+            )}
+          </div>
+          
+          {(isAdmin || isProvider) ? (
+            <textarea
+              value={scope}
+              onChange={(e) => setScope(e.target.value)}
+              placeholder="Defina o escopo detalhado do serviço a ser realizado..."
+              rows={4}
+              className="w-full rounded-sm border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm p-4 border bg-white"
+            />
+          ) : (
+            <div className="bg-white p-4 rounded-sm border border-slate-200 min-h-[60px]">
+              <p className="text-slate-600 text-sm whitespace-pre-wrap">
+                {scope || "Escopo da solicitação ainda não definido."}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Description */}
+        <div className="p-6 border-b border-slate-200">
+          <h3 className="text-sm font-medium text-slate-900 mb-2">Descrição do Problema</h3>
+          <div 
+            className="text-slate-700 rich-text-content"
+            dangerouslySetInnerHTML={{ __html: ticket.description }}
+          />
+          <style>{`
+            .rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+            .rich-text-content a { color: #2563eb; text-decoration: underline; }
+            .rich-text-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1rem 0; }
+          `}</style>
+        </div>
+
         {/* Materiais e Ferramentas */}
         <div className="p-6 border-b border-slate-200 bg-slate-50/50">
           <div className="flex justify-between items-center mb-3">
@@ -552,24 +618,8 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
           )}
         </div>
 
-
-        {/* Description */}
-        <div className="p-6 border-b border-slate-200">
-          <h3 className="text-sm font-medium text-slate-900 mb-2">Descrição do Problema</h3>
-          <div 
-            className="text-slate-700 rich-text-content"
-            dangerouslySetInnerHTML={{ __html: ticket.description }}
-          />
-          <style>{`
-            .rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
-            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
-            .rich-text-content a { color: #2563eb; text-decoration: underline; }
-            .rich-text-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1rem 0; }
-          `}</style>
-        </div>
-
         {ticket.photos && ticket.photos.length > 0 && (
-            <div className="mt-6">
+            <div className="p-6 border-b border-slate-200">
               <h3 className="text-sm font-medium text-slate-900 mb-3">Fotos Anexadas</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {ticket.photos.map((photo, index) => (
@@ -901,9 +951,25 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
               </div>
             </div>
 
-            {/* Materiais e Ferramentas (Print) */}
+            {ticket.scope && (
+              <div className="mb-8 border-t-2 border-slate-900 pt-6">
+                <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Escopo da Solicitação</h3>
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <p className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">{ticket.scope}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="border-2 border-slate-100 rounded-2xl p-8 mb-8">
+              <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Descrição do Problema</h3>
+              <div 
+                className="text-sm text-slate-800 leading-relaxed font-medium rich-text-content"
+                dangerouslySetInnerHTML={{ __html: ticket.description }}
+              />
+            </div>
+
             {ticket.materials && (
-              <div className="mb-10 border-t-2 border-slate-900 pt-6">
+              <div className="mb-8 border-t-2 border-slate-900 pt-6">
                 <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Materiais e Ferramentas Utilizados</h3>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                   <p className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">{ticket.materials}</p>
@@ -919,14 +985,6 @@ export default function TicketDetail({ ticketId, onBack }: TicketDetailProps) {
                 </div>
               </div>
             )}
-
-            <div className="border-2 border-slate-100 rounded-2xl p-8 mb-10">
-              <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">Escopo da Solicitação</h3>
-              <div 
-                className="text-sm text-slate-800 leading-relaxed font-medium rich-text-content"
-                dangerouslySetInnerHTML={{ __html: ticket.description }}
-              />
-            </div>
 
             {ticket.final_report && (
               <div className="border-2 border-emerald-100 bg-emerald-50/10 rounded-2xl p-8 mb-10">

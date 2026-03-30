@@ -37,6 +37,7 @@ export interface Ticket {
   external_id?: string;
   materials?: string;
   observations?: string;
+  scope?: string;
 }
 
 export interface Comment {

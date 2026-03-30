@@ -58,6 +58,7 @@ CREATE TABLE tickets (
   external_id TEXT,
   materials TEXT,
   observations TEXT,
+  scope TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES users (id),

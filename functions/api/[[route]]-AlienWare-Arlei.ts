@@ -299,7 +299,10 @@ app.get('/tickets/:id', async (c) => {
     ...ticket,
     comments: comments || [],
     photos: photos ? photos.filter(p => p.photo_type === 'opening').map(p => p.photo_data) : [],
-    final_photos: photos ? photos.filter(p => p.photo_type === 'final').map(p => p.photo_data) : []
+    final_photos: photos ? photos.filter(p => p.photo_type === 'final').map(p => p.photo_data) : [],
+    materials: (ticket as any).materials,
+    observations: (ticket as any).observations,
+    scope: (ticket as any).scope
   });
 });
 
@@ -322,6 +325,7 @@ app.post('/tickets', async (c) => {
   const provider_id = body.provider_id || null;
   const external_id = body.external_id || null;
   const photos = body.photos || [];
+  const scope = body.scope || null;
   
   const status = provider_id ? 'Em Atendimento' : 'Em Aberto'; // Standard INSERT without manual ID (let D1/SQLite autoincrement handle it)
   let stmt;
@@ -331,25 +335,25 @@ app.post('/tickets', async (c) => {
     stmt = c.env.DB.prepare(`
       INSERT INTO tickets (
         id, title, description, location, priority, type, sector, 
-        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, observations, scope
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
     `);
     bindParams = [
       id, title, description, location, priority, type, sector, 
-      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, body.observations || null, scope
     ];
   } else {
     stmt = c.env.DB.prepare(`
       INSERT INTO tickets (
         title, description, location, priority, type, sector, 
-        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+        company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, observations, scope
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
     `);
     bindParams = [
       title, description, location, priority, type, sector, 
-      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id
+      company, client_id, requestor_name, phone, sub_type, preferred_time, provider_id, status, external_id, body.observations || null, scope
     ];
   }
   
@@ -535,6 +539,27 @@ app.put('/tickets/:id/nps', async (c) => {
   const id = c.req.param('id');
   const { nps_score } = await c.req.json();
   await c.env.DB.prepare("UPDATE tickets SET nps_score = ? WHERE id = ?").bind(nps_score, id).run();
+  return c.json({ success: true });
+});
+
+app.put('/tickets/:id/materials', async (c) => {
+  const id = c.req.param('id');
+  const { materials } = await c.req.json();
+  await c.env.DB.prepare("UPDATE tickets SET materials = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(materials, id).run();
+  return c.json({ success: true });
+});
+
+app.put('/tickets/:id/observations', async (c) => {
+  const id = c.req.param('id');
+  const { observations } = await c.req.json();
+  await c.env.DB.prepare("UPDATE tickets SET observations = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(observations, id).run();
+  return c.json({ success: true });
+});
+
+app.put('/tickets/:id/scope', async (c) => {
+  const id = c.req.param('id');
+  const { scope } = await c.req.json();
+  await c.env.DB.prepare("UPDATE tickets SET scope = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(scope, id).run();
   return c.json({ success: true });
 });
 
