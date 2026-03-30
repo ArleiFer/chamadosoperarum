@@ -290,7 +290,7 @@ export default function Layout({ children, currentView, onNavigate, onSelectTick
                 Meu Perfil
               </button>
 
-              {user?.role === 'admin' && (
+              {(user?.role === 'admin' || user?.role === 'provider') && (
                 <button 
                   onClick={() => { onNavigate('settings'); setIsSidebarOpen(false); }}
                   className={cn(

@@ -57,6 +57,7 @@ CREATE TABLE tickets (
   final_report TEXT,
   external_id TEXT,
   materials TEXT,
+  observations TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES users (id),

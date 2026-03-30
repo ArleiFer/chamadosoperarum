@@ -36,6 +36,7 @@ export interface Ticket {
   reopen_reason?: string;
   external_id?: string;
   materials?: string;
+  observations?: string;
 }
 
 export interface Comment {
